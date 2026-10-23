@@ -1,9 +1,9 @@
 import { forkJoin, finalize } from 'rxjs';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ViewChild } from '@angular/core';
 
 import { Client } from '../../core/models/client.model';
 import { EmailPreview } from '../../core/models/email-preview.model';
-import { Invoice, InvoiceSummary } from '../../core/models/invoice.model';
+import { Invoice, InvoiceStatus, InvoiceSummary } from '../../core/models/invoice.model';
 import { ReminderProcessingResult } from '../../core/models/reminder.model';
 import { ClientsService } from '../../core/services/clients.service';
 import { DemoService } from '../../core/services/demo.service';
@@ -11,6 +11,7 @@ import { InvoicesService } from '../../core/services/invoices.service';
 import { RemindersService } from '../../core/services/reminders.service';
 import { errorMessage } from '../../core/utils/status-label';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { CreateInvoiceDialogComponent } from '../../shared/components/create-invoice-dialog/create-invoice-dialog.component';
 import { EmailPreviewComponent } from '../../shared/components/email-preview/email-preview.component';
 import { ClientFilterComponent } from './components/client-filter/client-filter.component';
 import { InvoiceTableComponent } from './components/invoice-table/invoice-table.component';
@@ -22,12 +23,13 @@ import { SummaryCardsComponent } from './components/summary-cards/summary-cards.
   selector: 'app-dashboard',
   imports: [
     ConfirmDialogComponent,
-    EmailPreviewComponent,
+    CreateInvoiceDialogComponent,
     ClientFilterComponent,
     InvoiceTableComponent,
     ProcessResultComponent,
     ProcessToolbarComponent,
-    SummaryCardsComponent
+    SummaryCardsComponent,
+    EmailPreviewComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -38,6 +40,8 @@ export class DashboardComponent implements OnInit {
   private readonly remindersService = inject(RemindersService);
   private readonly demoService = inject(DemoService);
 
+  @ViewChild(CreateInvoiceDialogComponent) createDialog?: CreateInvoiceDialogComponent;
+
   readonly clients = signal<Client[]>([]);
   readonly invoices = signal<Invoice[]>([]);
   readonly summary = signal<InvoiceSummary | null>(null);
@@ -46,6 +50,8 @@ export class DashboardComponent implements OnInit {
   readonly processing = signal(false);
   readonly resetting = signal(false);
   readonly confirming = signal(false);
+  readonly creating = signal(false);
+  readonly createOpen = signal(false);
   readonly result = signal<ReminderProcessingResult | null>(null);
   readonly error = signal<string | null>(null);
 
@@ -83,6 +89,83 @@ export class DashboardComponent implements OnInit {
   reload(): void {
     this.loadClients();
     this.loadInvoiceData();
+  }
+
+  openCreate(): void {
+    this.error.set(null);
+    this.createOpen.set(true);
+    this.createDialog?.reset();
+  }
+
+  closeCreate(): void {
+    if (this.creating()) {
+      return;
+    }
+
+    this.createOpen.set(false);
+  }
+
+  submitCreate(event: {
+    mode: 'newClient' | 'existingClient';
+    client: {
+      name: string;
+      email: string;
+      identification: string;
+      isActive: boolean;
+    };
+    invoice: {
+      clientId: string;
+      number: string;
+      description: string;
+      amount: number;
+      currency: string;
+      issueDate: string;
+      dueDate: string;
+      status: InvoiceStatus;
+    };
+  }): void {
+    if (this.creating()) {
+      return;
+    }
+
+    this.creating.set(true);
+    this.error.set(null);
+
+    if (event.mode === 'existingClient') {
+      this.invoicesService
+        .createInvoice(event.invoice)
+        .pipe(finalize(() => this.creating.set(false)))
+        .subscribe({
+          next: () => {
+            this.createOpen.set(false);
+            this.selectedClientId.set(event.invoice.clientId);
+            this.loadClients();
+            this.loadInvoiceData();
+          },
+          error: error => {
+            this.error.set(errorMessage(error));
+          }
+        });
+      return;
+    }
+
+    this.clientsService
+      .createClientWithInvoice({
+        client: event.client,
+        invoice: event.invoice
+      })
+      .pipe(finalize(() => this.creating.set(false)))
+      .subscribe({
+        next: invoice => {
+          this.createOpen.set(false);
+          this.selectedClientId.set(invoice.clientId);
+          this.loadClients();
+          this.loadInvoiceData();
+        },
+        error: error => {
+          this.error.set(errorMessage(error));
+        }
+      });
   }
 
   openConfirm(): void {

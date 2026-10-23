@@ -17,11 +17,11 @@ Si no tienes MongoDB, más abajo está la opción con Docker.
 ## 1. Clonar el repositorio
 
 ```powershell
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/JuanMalaver1511/Prueba-Tecnica-Monolegal.git
 cd "Prueba tecnica Monolegal"
 ```
 
-> Reemplaza `<URL_DEL_REPOSITORIO>` por el enlace del repo de GitHub.
+
 
 La estructura que vas a ver:
 

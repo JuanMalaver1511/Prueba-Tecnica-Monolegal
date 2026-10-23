@@ -66,6 +66,31 @@ public sealed class MongoInvoiceRepository : IInvoiceRepository
         return result.MatchedCount == 1;
     }
 
+    public async Task<Invoice> CreateAsync(Invoice invoice, CancellationToken cancellationToken = default)
+    {
+        var document = new InvoiceDocument
+        {
+            Id = invoice.Id,
+            ClientId = invoice.ClientId,
+            Number = invoice.Number,
+            Description = invoice.Description,
+            Amount = invoice.Amount,
+            Currency = invoice.Currency,
+            IssueDate = invoice.IssueDate,
+            DueDate = invoice.DueDate,
+            Status = invoice.Status.ToDbValue()
+        };
+
+        await _collection.InsertOneAsync(document, cancellationToken: cancellationToken);
+        return invoice;
+    }
+
+    public async Task<bool> InvoiceNumberExistsAsync(string number, CancellationToken cancellationToken = default)
+    {
+        var count = await _collection.CountDocumentsAsync(invoice => invoice.Number == number, cancellationToken: cancellationToken);
+        return count > 0;
+    }
+
     private static Invoice Map(InvoiceDocument document) =>
         new()
         {

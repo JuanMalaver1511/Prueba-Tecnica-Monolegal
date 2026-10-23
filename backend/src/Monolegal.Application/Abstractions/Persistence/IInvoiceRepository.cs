@@ -17,4 +17,8 @@ public interface IInvoiceRepository
         InvoiceStatus expectedStatus,
         InvoiceStatus newStatus,
         CancellationToken cancellationToken = default);
+
+    Task<Invoice> CreateAsync(Invoice invoice, CancellationToken cancellationToken = default);
+
+    Task<bool> InvoiceNumberExistsAsync(string number, CancellationToken cancellationToken = default);
 }

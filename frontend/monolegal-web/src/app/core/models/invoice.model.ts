@@ -34,3 +34,14 @@ export interface InvoiceSummary {
   pendingReminders: number;
   byStatus: InvoiceStatusSummary[];
 }
+
+export interface CreateInvoiceRequest {
+  clientId: string;
+  number: string;
+  description: string;
+  amount: number;
+  currency: string;
+  issueDate: string;
+  dueDate: string;
+  status: InvoiceStatus;
+}

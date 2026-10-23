@@ -11,4 +11,6 @@ public interface IClientRepository
     Task<IReadOnlyList<Client>> GetByIdsAsync(
         IReadOnlyCollection<string> ids,
         CancellationToken cancellationToken = default);
+
+    Task<Client> CreateAsync(Client client, CancellationToken cancellationToken = default);
 }

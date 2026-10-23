@@ -50,6 +50,21 @@ public sealed class MongoClientRepository : IClientRepository
         return documents.Select(Map).ToList();
     }
 
+    public async Task<ClientEntity> CreateAsync(ClientEntity client, CancellationToken cancellationToken = default)
+    {
+        var document = new ClientDocument
+        {
+            Id = client.Id,
+            Name = client.Name,
+            Email = client.Email,
+            Identification = client.Identification,
+            IsActive = client.IsActive
+        };
+
+        await _collection.InsertOneAsync(document, cancellationToken: cancellationToken);
+        return client;
+    }
+
     private static ClientEntity Map(ClientDocument document) =>
         new()
         {

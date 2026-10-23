@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../config/api.config';
 import { EmailPreview } from '../models/email-preview.model';
-import { Invoice, InvoiceSummary } from '../models/invoice.model';
+import { CreateInvoiceRequest, Invoice, InvoiceSummary } from '../models/invoice.model';
 
 @Injectable({ providedIn: 'root' })
 export class InvoicesService {
@@ -24,6 +24,10 @@ export class InvoicesService {
 
   getEmailPreview(invoiceId: string): Observable<EmailPreview> {
     return this.http.get<EmailPreview>(`${API_BASE_URL}/invoices/${invoiceId}/email-preview`);
+  }
+
+  createInvoice(request: CreateInvoiceRequest): Observable<Invoice> {
+    return this.http.post<Invoice>(`${API_BASE_URL}/invoices`, request);
   }
 
   private buildParams(clientId?: string): HttpParams {

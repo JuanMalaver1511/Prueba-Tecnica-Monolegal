@@ -1,0 +1,346 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(11, 12, 14, 0.58);
+  backdrop-filter: blur(4px);
+  animation: fade 0.16s ease;
+}
+
+.dialog {
+  width: min(760px, 100%);
+  max-height: min(860px, calc(100vh - 48px));
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: rise 0.18s var(--ease);
+}
+
+.dialog-head {
+  padding: 26px 28px 18px;
+}
+
+.dialog-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lime-ink);
+  background: var(--lime-soft);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.dialog-head h2 {
+  margin-top: 14px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+
+.dialog-lead {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--gray-600);
+}
+
+.mode-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0 28px 18px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--gray-50);
+}
+
+.mode-btn {
+  border: 0;
+  background: transparent;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+  transition: background-color 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.mode-btn--active {
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--shadow-xs);
+}
+
+.dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+
+.section-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(247, 248, 249, 0.9), var(--white));
+
+  h3 {
+    margin-top: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+}
+
+.section-kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+  padding: 18px 20px 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-600);
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  font-size: 13px;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.16s var(--ease), box-shadow 0.16s var(--ease);
+}
+
+input:focus,
+select:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px var(--lime-ring);
+  outline: none;
+}
+
+.select-wrap {
+  position: relative;
+}
+
+select {
+  appearance: none;
+  padding-right: 36px;
+}
+
+.caret {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--gray-600);
+  border-bottom: 1.5px solid var(--gray-600);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: end;
+  padding: 10px 12px;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.toggle-mark {
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--gray-100);
+  position: relative;
+}
+
+.toggle-mark::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.16s var(--ease);
+}
+
+.toggle input:checked + .toggle-mark {
+  background: var(--lime);
+  border-color: var(--lime-dark);
+}
+
+.toggle input:checked + .toggle-mark::after {
+  transform: translateX(16px);
+}
+
+.toggle-text {
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+.dialog-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 28px;
+  border-top: 1px solid var(--border);
+}
+
+.dialog-hint {
+  font-size: 11px;
+  color: var(--gray-500);
+}
+
+.dialog-hint code {
+  font-family: var(--font-mono);
+  color: var(--gray-700);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.16s var(--ease), border-color 0.16s var(--ease);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--line {
+  background: var(--white);
+  border-color: var(--border);
+  color: var(--ink);
+}
+
+.btn--line:not(:disabled):hover {
+  border-color: var(--ink);
+}
+
+.btn--run {
+  background: var(--lime);
+  color: var(--lime-ink);
+}
+
+.btn--run:not(:disabled):hover {
+  background: var(--lime-dark);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 680px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-switch {
+    margin: 0 18px 16px;
+  }
+
+  .dialog-head,
+  .dialog-body,
+  .dialog-foot {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .dialog-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dialog-actions {
+    width: 100%;
+  }
+
+  .dialog-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

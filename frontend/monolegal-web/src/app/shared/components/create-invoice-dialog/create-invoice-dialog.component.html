@@ -1,0 +1,196 @@
+<div class="overlay" role="presentation" (click)="onBackdrop()">
+  <div
+    class="dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="create-title"
+    (click)="$event.stopPropagation()">
+    <header class="dialog-head">
+      <span class="dialog-kicker">Crear registro</span>
+      <h2 id="create-title">Agregar cliente y factura</h2>
+      <p class="dialog-lead">
+        Puedes registrar un cliente nuevo con su primera factura, o añadir una factura a un cliente existente.
+      </p>
+    </header>
+
+    <div class="mode-switch">
+      <button
+        type="button"
+        class="mode-btn"
+        [class.mode-btn--active]="mode() === 'newClient'"
+        (click)="setMode('newClient')">
+        Cliente nuevo + factura
+      </button>
+      <button
+        type="button"
+        class="mode-btn"
+        [class.mode-btn--active]="mode() === 'existingClient'"
+        (click)="setMode('existingClient')">
+        Factura a cliente existente
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      @if (mode() === 'newClient') {
+        <section class="section">
+          <header class="section-head">
+            <span class="section-kicker">Datos del cliente</span>
+            <h3>Información general</h3>
+          </header>
+          <div class="grid">
+            <label class="field">
+              <span class="field-label">Nombre completo / Razón social</span>
+              <input
+                type="text"
+                [value]="clientName()"
+                (input)="clientName.set($any($event.target).value)"
+                placeholder="Ej. Ana María Torres" />
+            </label>
+            <label class="field">
+              <span class="field-label">Correo electrónico</span>
+              <input
+                type="email"
+                [value]="clientEmail()"
+                (input)="clientEmail.set($any($event.target).value)"
+                placeholder="cliente@empresa.com" />
+            </label>
+            <label class="field">
+              <span class="field-label">Identificación / NIT</span>
+              <input
+                type="text"
+                [value]="clientIdNumber()"
+                (input)="clientIdNumber.set($any($event.target).value)"
+                placeholder="CC 123456789 / NIT 900123456-7" />
+            </label>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                [checked]="clientActive()"
+                (change)="clientActive.set($any($event.target).checked)" />
+              <span class="toggle-mark"></span>
+              <span class="toggle-text">Cliente activo</span>
+            </label>
+          </div>
+        </section>
+      } @else {
+        <section class="section">
+          <header class="section-head">
+            <span class="section-kicker">Seleccionar cliente</span>
+            <h3>Cliente existente</h3>
+          </header>
+          <div class="grid">
+            <label class="field field--full">
+              <span class="field-label">Cliente</span>
+              <div class="select-wrap">
+                <select
+                  [value]="existingClientId()"
+                  (change)="existingClientId.set($any($event.target).value)">
+                  <option value="">Selecciona un cliente</option>
+                  @for (client of clients(); track client.id) {
+                    <option [value]="client.id">{{ client.name }} — {{ client.email }}</option>
+                  }
+                </select>
+                <span class="caret" aria-hidden="true"></span>
+              </div>
+            </label>
+          </div>
+        </section>
+      }
+
+      <section class="section">
+        <header class="section-head">
+          <span class="section-kicker">Datos de la factura</span>
+          <h3>Detalles</h3>
+        </header>
+        <div class="grid">
+          <label class="field">
+            <span class="field-label">N° de factura</span>
+            <input
+              type="text"
+              class="mono"
+              [value]="invoiceNumber()"
+              (input)="invoiceNumber.set($any($event.target).value)"
+              placeholder="FV-2026-XXXX" />
+          </label>
+          <label class="field">
+            <span class="field-label">Estado inicial</span>
+            <div class="select-wrap">
+              <select
+                [value]="invoiceStatus()"
+                (change)="invoiceStatus.set($any($event.target).value)">
+                @for (status of statusOptions; track status) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+              <span class="caret" aria-hidden="true"></span>
+            </div>
+          </label>
+          <label class="field field--full">
+            <span class="field-label">Descripción</span>
+            <input
+              type="text"
+              [value]="invoiceDescription()"
+              (input)="invoiceDescription.set($any($event.target).value)"
+              placeholder="Concepto de la factura" />
+          </label>
+          <label class="field">
+            <span class="field-label">Monto</span>
+            <input
+              type="number"
+              min="0"
+              step="1000"
+              class="mono"
+              [value]="invoiceAmount() === null ? '' : invoiceAmount()"
+              (input)="invoiceAmount.set($any($event.target).value === '' ? null : +$any($event.target).value)" />
+          </label>
+          <label class="field">
+            <span class="field-label">Moneda</span>
+            <input
+              type="text"
+              class="mono"
+              [value]="invoiceCurrency()"
+              (input)="invoiceCurrency.set($any($event.target).value)" />
+          </label>
+          <label class="field">
+            <span class="field-label">Fecha de emisión</span>
+            <input
+              type="date"
+              [value]="invoiceIssueDate()"
+              (input)="invoiceIssueDate.set($any($event.target).value)" />
+          </label>
+          <label class="field">
+            <span class="field-label">Fecha de vencimiento</span>
+            <input
+              type="date"
+              [value]="invoiceDueDate()"
+              (input)="invoiceDueDate.set($any($event.target).value)" />
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <footer class="dialog-foot">
+      <span class="dialog-hint">
+        Se guardará directamente en <code>MongoDB</code> al confirmar.
+      </span>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn--line" [disabled]="busy()" (click)="cancel.emit()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn--run"
+          [disabled]="!canSubmit()"
+          [attr.aria-busy]="busy()"
+          (click)="submitForm()">
+          @if (busy()) {
+            <span class="spinner" aria-hidden="true"></span>
+            Guardando
+          } @else {
+            Guardar en base de datos
+          }
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

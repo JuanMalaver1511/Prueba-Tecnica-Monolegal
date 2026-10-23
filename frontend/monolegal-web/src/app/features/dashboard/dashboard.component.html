@@ -3,7 +3,7 @@
     <span class="kicker">Panel de facturación</span>
     <h1>Recordatorios <span class="mark">de cobranza</span></h1>
     <p class="lead">
-      Revisa la cartera de tus clientes y dispara el flujo de recordatorios 
+      Revisa la cartera de tus clientes y dispara el flujo de recordatorios
     </p>
   </div>
 
@@ -27,14 +27,21 @@
       <button
         type="button"
         class="btn btn--line"
-        [disabled]="loading() || resetting()"
+        [disabled]="loading() || resetting() || creating()"
         (click)="reload()">
         {{ loading() ? 'Actualizando' : 'Actualizar' }}
       </button>
       <button
         type="button"
+        class="btn btn--line"
+        [disabled]="resetting() || processing() || creating()"
+        (click)="openCreate()">
+        Crear cliente / factura
+      </button>
+      <button
+        type="button"
         class="btn btn--dark"
-        [disabled]="resetting() || processing()"
+        [disabled]="resetting() || processing() || creating()"
         (click)="resetDemo()">
         {{ resetting() ? 'Restaurando' : 'Restaurar demo' }}
       </button>
@@ -103,9 +110,11 @@
     (cancel)="cancelConfirm()" />
 }
 
-@if (previewOpen()) {
-  <app-email-preview
-    [preview]="preview()"
-    [loading]="previewLoading()"
-    (close)="closeEmailPreview()" />
+@if (createOpen()) {
+  <app-create-invoice-dialog
+    [open]="createOpen()"
+    [busy]="creating()"
+    [clients]="clients()"
+    (submit)="submitCreate($event)"
+    (cancel)="closeCreate()" />
 }
