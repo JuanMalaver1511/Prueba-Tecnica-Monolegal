@@ -1,0 +1,53 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 8px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border);
+  background: var(--gray-50);
+  color: var(--gray-700);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badge-swatch {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 16%, transparent);
+}
+
+.badge--primerrecordatorio {
+  border-color: #e7d9a8;
+  background: #fdf8e8;
+  color: #9a7b12;
+}
+
+.badge--segundorecordatorio {
+  border-color: #e8cfa8;
+  background: #fdf3e6;
+  color: #a8690f;
+}
+
+.badge--desactivado {
+  border-color: #d9c4c4;
+  background: #f8eeee;
+  color: #8f3d3d;
+}
+
+.badge--aldia {
+  border-color: #c9cdd3;
+  background: #f0f1f3;
+  color: var(--gray-600);
+}
+
+.badge--pagada {
+  border-color: #c3dca0;
+  background: var(--lime-soft);
+  color: var(--lime-ink);
+}

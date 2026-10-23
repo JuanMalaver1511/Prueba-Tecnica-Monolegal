@@ -1,0 +1,42 @@
+<section class="cards" aria-label="Resumen de facturas">
+  <article class="card">
+    <span class="card-label">Facturas</span>
+    <strong class="card-value">{{ summary().totalInvoices }}</strong>
+    <span class="card-note">en la vista actual</span>
+  </article>
+
+  <article class="card card--dark">
+    <span class="card-label">Valor cartera</span>
+    <strong class="card-value card-value--money">
+      {{ summary().totalAmount | currency: summary().currency : 'symbol-narrow' : '1.0-0' }}
+    </strong>
+    <span class="card-note">suma de emitidas</span>
+  </article>
+
+  <article class="card card--lime">
+    <span class="card-label">Pendientes</span>
+    <strong class="card-value">{{ summary().pendingReminders }}</strong>
+    <span class="card-note">primer y segundo aviso</span>
+  </article>
+
+  <article class="card">
+    <span class="card-label">Al día / pagadas</span>
+    <strong class="card-value">{{ settledCount() }}</strong>
+    <span class="card-note">sin gestión pendiente</span>
+  </article>
+</section>
+
+<div class="breakdown" aria-label="Distribución por estado">
+  @for (status of summary().byStatus; track status.status) {
+    <div class="segment" [class]="'segment--' + status.status">
+      <span class="segment-dot" aria-hidden="true"></span>
+      <div class="segment-body">
+        <span class="segment-label">{{ status.label }}</span>
+        <span class="segment-total mono">
+          {{ status.totalAmount | currency: summary().currency : 'symbol-narrow' : '1.0-0' }}
+        </span>
+      </div>
+      <strong class="segment-count">{{ status.count }}</strong>
+    </div>
+  }
+</div>

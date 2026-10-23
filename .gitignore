@@ -1,0 +1,29 @@
+# .NET
+**/bin/
+**/obj/
+.vs/
+TestResults/
+*.user
+*.suo
+
+# Angular / Node
+**/node_modules/
+**/dist/
+**/.angular/
+npm-debug.log*
+
+# Runtime artifacts
+outbox/
+backend/src/Monolegal.Api/outbox/
+backend/src/Monolegal.Api/logs/
+.mongo-data/
+
+# Local secrets and environment files
+.env
+.env.*
+appsettings.local.json
+appsettings.*.local.json
+
+# IDE / OS
+.DS_Store
+Thumbs.db

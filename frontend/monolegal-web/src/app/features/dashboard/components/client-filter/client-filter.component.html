@@ -1,0 +1,15 @@
+<div class="field">
+  <span class="field-label">Cliente</span>
+  <div class="control">
+    <select
+      [value]="selected()"
+      (change)="onChange($event)"
+      aria-label="Filtrar facturas por cliente">
+      <option value="all">Todos los clientes</option>
+      @for (client of clients(); track client.id) {
+        <option [value]="client.id">{{ client.name }}</option>
+      }
+    </select>
+    <span class="caret" aria-hidden="true"></span>
+  </div>
+</div>

@@ -1,0 +1,66 @@
+.field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+.control {
+  position: relative;
+}
+
+select {
+  appearance: none;
+  min-width: 200px;
+  padding: 9px 36px 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+
+select:hover {
+  border-color: var(--border-strong);
+}
+
+select:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px var(--lime-ring);
+}
+
+.caret {
+  position: absolute;
+  top: 50%;
+  right: 13px;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--gray-600);
+  border-bottom: 1.5px solid var(--gray-600);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+@media (max-width: 880px) {
+  .field {
+    justify-content: space-between;
+  }
+
+  select {
+    width: 100%;
+  }
+
+  .control {
+    flex: 1;
+  }
+}

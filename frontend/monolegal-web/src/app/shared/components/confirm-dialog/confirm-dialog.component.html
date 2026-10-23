@@ -1,0 +1,74 @@
+<div class="overlay" role="presentation" (click)="onBackdrop()">
+  <div
+    class="dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirm-title"
+    (click)="$event.stopPropagation()">
+    <header class="dialog-head">
+      <span class="dialog-kicker">Confirmar envío</span>
+      <h2 id="confirm-title">
+        Se enviarán {{ reminderCount() }} recordatorios a {{ recipientsCount() }}
+        {{ recipientsCount() === 1 ? 'cliente' : 'clientes' }}
+      </h2>
+      <p class="dialog-lead">
+        Revisa los destinatarios antes de continuar.
+      </p>
+    </header>
+
+    <div class="dialog-scope">
+      <span class="scope-chip mono">{{ scopeLabel() }}</span>
+      <span class="scope-chip scope-chip--lime mono">{{ reminderCount() }} pendientes</span>
+    </div>
+
+    <div class="dialog-body">
+      @if (recipients().length === 0) {
+        <p class="dialog-empty">No hay facturas en primer o segundo recordatorio para enviar.</p>
+      } @else {
+        @for (group of recipients(); track group.client.id) {
+          <article class="recipient">
+            <div class="recipient-head">
+              <strong>{{ group.client.name }}</strong>
+              <span class="recipient-email mono">{{ group.client.email || 'sin correo' }}</span>
+            </div>
+            <ul class="recipient-list">
+              @for (invoice of group.invoices; track invoice.id) {
+                <li class="recipient-item">
+                  <span class="item-number mono">{{ invoice.number }}</span>
+                  <span class="item-arrow" aria-hidden="true">→</span>
+                  <span class="item-status" [class]="'item-status--' + invoice.status">
+                    {{ statusLabel(invoice.status) }}
+                  </span>
+                </li>
+              }
+            </ul>
+          </article>
+        }
+      }
+    </div>
+
+    <footer class="dialog-foot">
+      <span class="dialog-hint">
+        Los correos quedan como <code>.eml</code> en la bandeja del backend.
+      </span>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn--line" [disabled]="busy()" (click)="cancel.emit()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn--run"
+          [disabled]="busy() || reminderCount() === 0"
+          [attr.aria-busy]="busy()"
+          (click)="confirm.emit()">
+          @if (busy()) {
+            <span class="spinner" aria-hidden="true"></span>
+            Enviando
+          } @else {
+            Confirmar envío
+          }
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+@if (invoices().length === 0) {
+  <div class="empty">
+    <span class="empty-mark" aria-hidden="true"></span>
+    <h3>No hay facturas para mostrar</h3>
+    <p>Cambia de cliente o usa <strong>Restaurar demo</strong> para volver al estado inicial.</p>
+  </div>
+} @else {
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Factura</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">Vencimiento</th>
+          <th scope="col" class="right">Monto</th>
+          <th scope="col">Estado</th>
+          <th scope="col" class="right"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (invoice of invoices(); track invoice.id) {
+          <tr [class.pending]="invoice.isReminderPending">
+            <td>
+              <span class="num mono">{{ invoice.number }}</span>
+              <span class="desc">{{ invoice.description }}</span>
+            </td>
+            <td>
+              <span class="client">{{ invoice.clientName }}</span>
+              <span class="client-id mono">{{ invoice.clientId }}</span>
+            </td>
+            <td>
+              <span class="date" [class.date--over]="isOverdue(invoice)">
+                {{ invoice.dueDate | date: 'dd MMM yyyy' }}
+              </span>
+              @if (isOverdue(invoice)) {
+                <span class="over mono">vencida</span>
+              }
+            </td>
+            <td class="right">
+              <span class="amount">
+                {{ invoice.amount | currency: invoice.currency : 'symbol-narrow' : '1.0-0' }}
+              </span>
+              <span class="ccy mono">{{ invoice.currency }}</span>
+            </td>
+            <td>
+              <app-status-badge [status]="invoice.status" [label]="invoice.statusLabel" />
+            </td>
+            <td class="right">
+              <button
+                type="button"
+                class="preview-btn"
+                title="Ver el correo que recibe el cliente"
+                (click)="previewInvoice.emit(invoice)">
+                Ver correo
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

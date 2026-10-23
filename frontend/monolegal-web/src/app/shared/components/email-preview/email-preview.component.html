@@ -1,0 +1,72 @@
+<div class="overlay" role="presentation" (click)="onBackdrop()">
+  <div
+    class="mail"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mail-title"
+    (click)="$event.stopPropagation()">
+    <header class="mail-head">
+      <div class="mail-title-row">
+        <span class="mail-kicker">Vista previa del correo</span>
+        @if (preview(); as p) {
+          <span class="mail-state" [class.mail-state--sent]="p.wasSent">
+            {{ p.wasSent ? 'enviado' : 'proyectado' }}
+          </span>
+        }
+      </div>
+      <h2 id="mail-title">Así le llega el correo al cliente</h2>
+    </header>
+
+    @if (loading()) {
+      <div class="mail-loading">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="mono">generando vista previa</span>
+      </div>
+    } @else if (preview(); as p) {
+      <div class="mail-meta">
+        <div class="meta-row">
+          <span class="meta-label">Para</span>
+          <span class="meta-value">
+            {{ p.clientName }}
+            @if (p.toAddress) {
+              <span class="mono meta-mail">&lt;{{ p.toAddress }}&gt;</span>
+            }
+          </span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Asunto</span>
+          <span class="meta-value">{{ p.subject || '—' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Factura</span>
+          <span class="meta-value mono">{{ p.invoiceNumber }}</span>
+        </div>
+        @if (p.sentAtUtc) {
+          <div class="meta-row">
+            <span class="meta-label">Enviado</span>
+            <span class="meta-value mono">{{ p.sentAtUtc }}</span>
+          </div>
+        }
+      </div>
+
+      @if (p.htmlBody) {
+        <div class="mail-frame">
+          <iframe
+            title="Cuerpo del correo"
+            sandbox=""
+            [srcdoc]="p.htmlBody">
+          </iframe>
+        </div>
+      } @else {
+        <p class="mail-empty">
+          Esta factura no tiene un recordatorio pendiente ni un correo enviado. No hay nada que
+          previsualizar.
+        </p>
+      }
+    }
+
+    <footer class="mail-foot">
+      <button type="button" class="btn" (click)="close.emit()">Cerrar</button>
+    </footer>
+  </div>
+</div>

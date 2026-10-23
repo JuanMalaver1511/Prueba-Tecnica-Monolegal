@@ -1,0 +1,66 @@
+<section class="result" [class.result--warn]="hasFailures()" role="status" aria-live="polite">
+  <header class="result-head">
+    <div class="result-heading">
+      <span class="result-mark" aria-hidden="true"></span>
+      <div>
+        <h2>{{ hasFailures() ? 'Proceso con novedades' : 'Recordatorios procesados' }}</h2>
+        <p>
+          {{ result().emailsSent }} correos enviados · {{ result().invoicesUpdated }} facturas
+          actualizadas en MongoDB
+        </p>
+      </div>
+    </div>
+    <button type="button" class="close" (click)="dismiss.emit()" aria-label="Cerrar resumen">
+      cerrar
+    </button>
+  </header>
+
+  <div class="tally">
+    <div class="tally-item">
+      <span>Clientes</span>
+      <strong>{{ result().clientsProcessed }}</strong>
+    </div>
+    <div class="tally-item">
+      <span>Correos</span>
+      <strong>{{ result().emailsSent }}</strong>
+    </div>
+    <div class="tally-item">
+      <span>Actualizadas</span>
+      <strong>{{ result().invoicesUpdated }}</strong>
+    </div>
+    <div class="tally-item" [class.tally-item--bad]="hasFailures()">
+      <span>Errores</span>
+      <strong>{{ result().failures }}</strong>
+    </div>
+  </div>
+
+  @if (result().actions.length === 0) {
+    <p class="empty">No había facturas en primer o segundo recordatorio para procesar.</p>
+  } @else {
+    <ul class="rows">
+      @for (action of result().actions; track action.invoiceId) {
+        <li class="row" [class.row--bad]="!action.succeeded">
+          <div class="row-id">
+            <strong class="mono">{{ action.invoiceNumber }}</strong>
+            <span>{{ action.clientName }}</span>
+            <small class="mono">{{ action.clientEmail }}</small>
+          </div>
+
+          <div class="flow" aria-label="Cambio de estado">
+            <span class="flow-from">{{ statusLabel(action.previousStatus) }}</span>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <span class="flow-to" [class]="'flow-to--' + action.newStatus">
+              {{ statusLabel(action.newStatus) }}
+            </span>
+          </div>
+
+          <span class="tag">{{ action.succeeded ? 'ok' : 'falló' }}</span>
+
+          @if (!action.succeeded && action.errorMessage) {
+            <p class="row-error">{{ action.errorMessage }}</p>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>

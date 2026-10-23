@@ -1,0 +1,38 @@
+<section class="action">
+  <div class="action-info">
+    <span class="action-kicker">Acción masiva</span>
+    <h2>Ejecutar recordatorios</h2>
+    <p>
+      Revisa <strong>{{ invoicesCount() }}</strong> facturas de <strong>{{ scopeLabel() }}</strong> y
+      envía correo solo a las que están en primer o segundo aviso. El estado se guarda después del
+      envío.
+    </p>
+    <div class="meta">
+      <span class="meta-item mono">{{ clientsCount() }} clientes</span>
+      <span class="meta-item mono">{{ invoicesCount() }} facturas</span>
+      <span class="meta-item meta-item--lime mono">{{ eligibleCount() }} pendientes</span>
+    </div>
+  </div>
+
+  <div class="action-side">
+    <button
+      type="button"
+      class="run"
+      [disabled]="processing() || eligibleCount() === 0"
+      [attr.aria-busy]="processing()"
+      (click)="process.emit()">
+      @if (processing()) {
+        <span class="spinner" aria-hidden="true"></span>
+        Procesando
+      } @else if (eligibleCount() === 0) {
+        Sin pendientes
+      } @else {
+        Enviar {{ eligibleCount() }}
+        <span class="run-arrow" aria-hidden="true">→</span>
+      }
+    </button>
+    <span class="action-hint">
+      Los correos quedan como <code>.eml</code> en la carpeta <code>outbox</code> del proyecto.
+    </span>
+  </div>
+</section>

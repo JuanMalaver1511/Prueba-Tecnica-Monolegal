@@ -1,0 +1,33 @@
+@host = http://localhost:5133
+
+GET {{host}}/health
+Accept: application/json
+
+###
+
+GET {{host}}/api/clients
+Accept: application/json
+
+###
+
+GET {{host}}/api/invoices
+Accept: application/json
+
+###
+
+GET {{host}}/api/invoices/summary
+Accept: application/json
+
+###
+
+POST {{host}}/api/reminders/process
+Content-Type: application/json
+
+{
+  "clientIds": []
+}
+
+###
+
+POST {{host}}/api/demo/reset
+Accept: application/json

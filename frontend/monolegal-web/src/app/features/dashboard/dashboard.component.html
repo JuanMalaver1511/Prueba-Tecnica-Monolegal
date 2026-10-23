@@ -1,0 +1,111 @@
+<section class="hero">
+  <div class="hero-main">
+    <span class="kicker">Panel de facturación</span>
+    <h1>Recordatorios <span class="mark">de cobranza</span></h1>
+    <p class="lead">
+      Revisa la cartera de tus clientes y dispara el flujo de recordatorios 
+    </p>
+  </div>
+
+  <div class="hero-side">
+    <dl class="stats">
+      <div>
+        <dt>Clientes</dt>
+        <dd>{{ clients().length }}</dd>
+      </div>
+      <div>
+        <dt>Facturas</dt>
+        <dd>{{ invoices().length }}</dd>
+      </div>
+      <div class="stats-accent">
+        <dt>Pendientes</dt>
+        <dd>{{ eligibleCount() }}</dd>
+      </div>
+    </dl>
+
+    <div class="hero-actions">
+      <button
+        type="button"
+        class="btn btn--line"
+        [disabled]="loading() || resetting()"
+        (click)="reload()">
+        {{ loading() ? 'Actualizando' : 'Actualizar' }}
+      </button>
+      <button
+        type="button"
+        class="btn btn--dark"
+        [disabled]="resetting() || processing()"
+        (click)="resetDemo()">
+        {{ resetting() ? 'Restaurando' : 'Restaurar demo' }}
+      </button>
+    </div>
+  </div>
+</section>
+
+@if (error()) {
+  <div class="notice" role="alert">
+    <span class="notice-bar" aria-hidden="true"></span>
+    <div class="notice-body">
+      <strong>No se pudo completar la operación</strong>
+      <span>{{ error() }}</span>
+    </div>
+    <button type="button" class="notice-close" (click)="error.set(null)">cerrar</button>
+  </div>
+}
+
+@if (summary(); as summary) {
+  <app-summary-cards [summary]="summary" />
+}
+
+<section class="panel" aria-labelledby="invoices-title">
+  <header class="panel-head">
+    <div class="panel-title">
+      <h2 id="invoices-title">Facturas</h2>
+      <span class="count mono">{{ invoices().length }}</span>
+    </div>
+
+    <app-client-filter
+      [clients]="clients()"
+      [selected]="selectedClientId()"
+      (selectedChange)="onClientChange($event)" />
+  </header>
+
+  @if (loading()) {
+    <div class="panel-loading">
+      <span class="spinner" aria-hidden="true"></span>
+      <span class="mono">cargando facturas</span>
+    </div>
+  } @else {
+    <app-invoice-table [invoices]="invoices()" (previewInvoice)="openEmailPreview($event)" />
+  }
+</section>
+
+<app-process-toolbar
+  [processing]="processing()"
+  [eligibleCount]="eligibleCount()"
+  [invoicesCount]="invoices().length"
+  [clientsCount]="clientsInScope()"
+  [scopeLabel]="scopeLabel()"
+  (process)="openConfirm()" />
+
+@if (result(); as result) {
+  <app-process-result [result]="result" (dismiss)="dismissResult()" />
+}
+
+@if (confirming()) {
+  <app-confirm-dialog
+    [open]="confirming()"
+    [busy]="processing()"
+    [clients]="clients()"
+    [invoices]="invoices()"
+    [scopeLabel]="scopeLabel()"
+    (confirm)="confirmProcess()"
+    (cancel)="cancelConfirm()" />
+}
+
+@if (previewOpen()) {
+  <app-email-preview
+    [preview]="preview()"
+    [loading]="previewLoading()"
+    (close)="closeEmailPreview()" />
+}
